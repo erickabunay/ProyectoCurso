@@ -1,0 +1,70 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #1a1d20 !important;
+    color: #fff;
+    min-height: 100vh;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: #141619;
+}
+
+.sidebar-header h3 span {
+    color: #0d6efd;
+}
+
+#sidebar ul li a {
+    padding: 15px 20px;
+    display: block;
+    color: #adb5bd;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+#sidebar ul li a:hover, #sidebar ul li.active a {
+    color: #fff;
+    background: #0d6efd;
+    border-radius: 5px;
+    margin: 0 10px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.stat-card h5 {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.stat-card.highlight {
+    background: #0d6efd;
+    color: white;
+}
+
+.stat-card.highlight h5 { color: rgba(255,255,255,0.8); }
+
+/* Estilos para Housekeeping */
+.room-card {
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    color: white;
+}
+
+.room-card span { display: block; font-size: 0.7rem; font-weight: normal; }
+.clean { background: #198754; }
+.dirty { background: #dc3545; }
+.maintenance { background: #6c757d; }
