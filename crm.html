@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelOS - CRM Gestión de Huéspedes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="crm.css">
+</head>
+<body>
+  
+
+    <!-- Contenedor Principal -->
+    <div class="container-fluid py-4">
+        <!-- Título y Acciones Rápidas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h2><i class="bi bi-people-fill"></i> CRM - Gestión de Huéspedes</h2>
+                        <p class="text-muted mb-0">Sistema de gestión de relaciones con clientes y análisis de comportamiento</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success" onclick="openNewGuest()">
+                            <i class="bi bi-person-plus"></i> Nuevo Huésped
+                        </button>
+                        <button class="btn btn-primary" onclick="sendMassEmail()">
+                            <i class="bi bi-envelope-fill"></i> Email Masivo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPIs y Métricas -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="kpi-card kpi-primary">
+                    <div class="kpi-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 id="totalGuests">1,248</h3>
+                        <p>Total Huéspedes</p>
+                        <small><i class="bi bi-arrow-up"></i> +18% este mes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="kpi-card kpi-success">
+                    <div class="kpi-icon">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 id="vipGuests">87</h3>
+                        <p>Huéspedes VIP</p>
+                        <small><i class="bi bi-trophy"></i> Alta fidelidad</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="kpi-card kpi-warning">
+                    <div class="kpi-icon">
+                        <i class="bi bi-repeat"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 id="returningGuests">42%</h3>
+                        <p>Tasa de Retorno</p>
+                        <small><i class="bi bi-graph-up"></i> +5% vs año anterior</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="kpi-card kpi-info">
+                    <div class="kpi-icon">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <h3 id="avgRevenue">$845</h3>
+                        <p>Revenue por Huésped</p>
+                        <small><i class="bi bi-arrow-up"></i> +12% este trimestre</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y Búsqueda -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="bi bi-funnel"></i> Búsqueda y Filtros Avanzados</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Buscar Huésped</label>
+                        <div class="search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="form-control" id="searchGuest" placeholder="Nombre, email o teléfono...">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Segmento</label>
+                        <select class="form-select" id="filterSegment">
+                            <option value="">Todos</option>
+                            <option value="vip">VIP</option>
+                            <option value="frecuente">Frecuente</option>
+                            <option value="nuevo">Nuevo</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">País</label>
+                        <select class="form-select" id="filterCountry">
+                            <option value="">Todos</option>
+                            <option value="EC">Ecuador</option>
+                            <option value="CO">Colombia</option>
+                            <option value="PE">Perú</option>
+                            <option value="US">USA</option>
+                            <option value="ES">España</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Satisfacción</label>
+                        <select class="form-select" id="filterSatisfaction">
+                            <option value="">Todas</option>
+                            <option value="5">⭐⭐⭐⭐⭐</option>
+                            <option value="4">⭐⭐⭐⭐</option>
+                            <option value="3">⭐⭐⭐</option>
+                            <option value="2">⭐⭐</option>
+                            <option value="1">⭐</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" onclick="applyFilters()">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="filter-tags" id="activeTags">
+                            <!-- Tags de filtros activos se muestran aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs de Visualización -->
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs custom-tabs" id="crmTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="guests-tab" data-bs-toggle="tab" data-bs-target="#guests" type="button">
+                            <i class="bi bi-people"></i> Todos los Huéspedes
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="vip-tab" data-bs-toggle="tab" data-bs-target="#vip" type="button">
+                            <i class="bi bi-star-fill"></i> VIP
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics" type="button">
+                            <i class="bi bi-graph-up-arrow"></i> Analítica
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="segments-tab" data-bs-toggle="tab" data-bs-target="#segments" type="button">
+                            <i class="bi bi-diagram-3"></i> Segmentación
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="crmTabContent">
+                    <!-- TAB: Todos los Huéspedes -->
+                    <div class="tab-pane fade show active" id="guests" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h5><i class="bi bi-list-ul"></i> Base de Datos de Huéspedes</h5>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-success btn-sm" onclick="exportData()">
+                                        <i class="bi bi-file-earmark-excel"></i> Exportar
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshGuests()">
+                                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="guestsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Foto</th>
+                                                <th>Huésped</th>
+                                                <th>Segmento</th>
+                                                <th>Visitas</th>
+                                                <th>Última Visita</th>
+                                                <th>Revenue Total</th>
+                                                <th>Satisfacción</th>
+                                                <th>Preferencias</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="guestsBody">
+                                            <!-- Se carga dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav aria-label="Paginación">
+                                    <ul class="pagination justify-content-center" id="pagination">
+                                        <!-- Se genera dinámicamente -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: VIP -->
+                    <div class="tab-pane fade" id="vip" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header bg-gradient-gold text-white">
+                                <h5><i class="bi bi-trophy-fill"></i> Programa de Fidelidad VIP</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4" id="vipGuestsGrid">
+                                    <!-- Cards VIP se cargan dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: Analítica -->
+                    <div class="tab-pane fade" id="analytics" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-graph-up"></i> Tendencia de Huéspedes</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="guestTrendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-geo-alt"></i> Distribución Geográfica</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="geographyChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-heart-fill"></i> Nivel de Satisfacción</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="satisfactionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-cash-coin"></i> Revenue por Segmento</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: Segmentación -->
+                    <div class="tab-pane fade" id="segments" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="segment-card segment-vip">
+                                    <div class="segment-icon">
+                                        <i class="bi bi-gem"></i>
+                                    </div>
+                                    <h4>VIP</h4>
+                                    <h2>87</h2>
+                                    <p>+5 visitas mínimo<br>Gasto promedio alto</p>
+                                    <button class="btn btn-light btn-sm" onclick="viewSegment('vip')">Ver Detalles</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="segment-card segment-frequent">
+                                    <div class="segment-icon">
+                                        <i class="bi bi-repeat"></i>
+                                    </div>
+                                    <h4>Frecuentes</h4>
+                                    <h2>342</h2>
+                                    <p>2-4 visitas<br>Clientes recurrentes</p>
+                                    <button class="btn btn-light btn-sm" onclick="viewSegment('frecuente')">Ver Detalles</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="segment-card segment-new">
+                                    <div class="segment-icon">
+                                        <i class="bi bi-star"></i>
+                                    </div>
+                                    <h4>Nuevos</h4>
+                                    <h2>645</h2>
+                                    <p>Primera visita<br>Oportunidad de conversión</p>
+                                    <button class="btn btn-light btn-sm" onclick="viewSegment('nuevo')">Ver Detalles</button>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="segment-card segment-inactive">
+                                    <div class="segment-icon">
+                                        <i class="bi bi-hourglass-split"></i>
+                                    </div>
+                                    <h4>Inactivos</h4>
+                                    <h2>174</h2>
+                                    <p>Sin visitas >6 meses<br>Campaña de reactivación</p>
+                                    <button class="btn btn-light btn-sm" onclick="viewSegment('inactivo')">Ver Detalles</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recomendaciones Automáticas -->
+                        <div class="card mt-4">
+                            <div class="card-header bg-gradient-info text-white">
+                                <h5><i class="bi bi-lightbulb-fill"></i> Recomendaciones de Marketing Automático</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="recommendation-list" id="recommendations">
+                                    <!-- Se cargan dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Perfil Completo del Huésped -->
+    <div class="modal fade" id="guestProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-badge"></i> Perfil del Huésped
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="guestProfileContent">
+                    <!-- Se carga dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="editGuest()">
+                        <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="sendEmail()">
+                        <i class="bi bi-envelope"></i> Enviar Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Nuevo Huésped -->
+    <div class="modal fade" id="newGuestModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-plus"></i> Registrar Nuevo Huésped
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="newGuestForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre Completo *</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nacionalidad</label>
+                                <select class="form-select">
+                                    <option value="EC">Ecuador</option>
+                                    <option value="CO">Colombia</option>
+                                    <option value="PE">Perú</option>
+                                    <option value="US">Estados Unidos</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Preferencias y Notas</label>
+                                <textarea class="form-control" rows="3" placeholder="Ej: Alérgico a lácteos, prefiere piso alto, cama king size..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="saveNewGuest()">
+                        <i class="bi bi-check-circle"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Email Masivo -->
+    <div class="modal fade" id="massEmailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-envelope-fill"></i> Enviar Email Masivo
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="massEmailForm">
+                        <div class="mb-3">
+                            <label class="form-label">Destinatarios</label>
+                            <select class="form-select" id="emailRecipients">
+                                <option value="all">Todos los huéspedes (1,248)</option>
+                                <option value="vip">Solo VIP (87)</option>
+                                <option value="frecuente">Frecuentes (342)</option>
+                                <option value="nuevo">Nuevos (645)</option>
+                                <option value="inactivo">Inactivos (174)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Asunto</label>
+                            <input type="text" class="form-control" placeholder="Ej: Oferta Especial - 20% de Descuento">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mensaje</label>
+                            <textarea class="form-control" rows="6" placeholder="Escribe tu mensaje aquí..."></textarea>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> El email se enviará en formato HTML con el diseño corporativo del hotel
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="sendMassEmailConfirm()">
+                        <i class="bi bi-send"></i> Enviar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="crm.js"></script>
+</body>
+</html>

@@ -1,118 +1,529 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HotelOS - Gerencia General</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>HotelOS - Sistema Integral de Gestión Hotelera</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; margin: 0; }
-        #login-screen { background: #1a1d20; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .sidebar { min-width: 250px; background: #1a1d20; min-height: 100vh; color: white; }
-        .sidebar a { padding: 15px 25px; display: block; color: #adb5bd; text-decoration: none; transition: 0.3s; cursor: pointer; }
-        .sidebar a:hover { background: #0d6efd; color: white; }
-        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; }
-        .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
-        .room { padding: 20px; border-radius: 10px; color: white; text-align: center; font-weight: bold; }
-        .clean { background: #198754; } .dirty { background: #dc3545; } .maint { background: #6c757d; }
-        .d-none { display: none !important; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-
-<div id="login-screen">
-    <div class="card p-4 shadow-lg" style="width: 350px;">
-        <h3 class="text-center mb-4">Hotel<span>OS</span></h3>
-        <input type="text" id="user" class="form-control mb-3" placeholder="Usuario (admin)">
-        <input type="password" id="pass" class="form-control mb-3" placeholder="Contraseña (1234)">
-        <button onclick="acceder()" class="btn btn-primary w-100">Ingresar al Sistema</button>
-        <p id="error" class="text-danger mt-2 d-none text-center">Datos incorrectos</p>
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Hotel<span>OS</span></h1>
+                <p>Sistema Integral de Gestión Hotelera</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Usuario" value="admin">
+                    <label for="username"><i class="bi bi-person"></i> Usuario</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Contraseña" value="admin">
+                    <label for="password"><i class="bi bi-lock"></i> Contraseña</label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="remember">
+                    <label class="form-check-label" for="remember">
+                        Recordar sesión
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-box-arrow-in-right"></i> Ingresar al Sistema
+                </button>
+                <div id="errorMsg" class="error-msg" style="display:none;">
+                    <i class="bi bi-exclamation-triangle"></i> Datos incorrectos
+                </div>
+            </form>
+            <div class="login-footer">
+                <small>v1.0.0 | Powered by ASP.NET Core & React.js</small>
+            </div>
+        </div>
     </div>
-</div>
 
-<div id="sistema" class="d-flex d-none">
-    <nav class="sidebar">
-        <div class="p-4 border-bottom border-secondary mb-3"><h4>GERENCIA</h4></div>
-        <a onclick="ver('dash')">📊 Dashboard</a>
-        <a onclick="ver('res')">🔑 Front Office</a>
-        <a onclick="ver('house')">🧹 Housekeeping</a>
-        <a onclick="ver('rep')">📈 Reportes</a>
-        <a href="index.html" class="mt-5 text-danger">🚪 Salir</a>
-    </nav>
-
-    <div class="flex-grow-1">
-        <nav class="navbar navbar-light bg-white p-3 border-bottom">
-            <h4 id="titulo">Dashboard Operativo</h4>
-        </nav>
-
-        <div class="p-4">
-            <div id="dash" class="seccion">
-                <div class="row g-4">
-                    <div class="col-md-3"><div class="stat-card"><h6>Ocupación</h6><h3>85%</h3></div></div>
-                    <div class="col-md-3"><div class="stat-card"><h6>ADR</h6><h3>$120</h3></div></div>
-                    <div class="col-md-3"><div class="stat-card"><h6>RevPAR</h6><h3>$102</h3></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="background: #0d6efd; color: white;"><h6>Satisfacción</h6><h3>4.8</h3></div></div>
+    <!-- Sistema Principal -->
+    <div id="mainSystem" style="display:none;">
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Hotel<span>OS</span></h3>
+                    <p class="user-info">
+                        <i class="bi bi-person-circle"></i>
+                        <span>GERENCIA</span>
+                    </p>
                 </div>
-            </div>
+                <ul class="list-unstyled">
+                    <li class="active">
+                        <a href="#dashboard" onclick="showSection('dashboard')">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                            <span class="badge bg-success ms-auto">Live</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#frontOffice" onclick="showSection('frontOffice')">
+                            <i class="bi bi-door-open"></i> Front Office
+                            <span class="badge bg-primary ms-auto">5</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#housekeeping" onclick="showSection('housekeeping')">
+                            <i class="bi bi-broom"></i> Housekeeping
+                            <span class="badge bg-warning ms-auto">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#reservations" onclick="showSection('reservations')">
+                            <i class="bi bi-calendar-check"></i> Reservas
+                    
+                            <span class="badge bg-info ms-auto">12</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="#crm" onclick="showSection('crm')">
+                            <i class="bi bi-people"></i> CRM
+                            <span class="badge bg-success ms-auto">1,248</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#settings" onclick="showSection('settings')">
+                            <i class="bi bi-gear"></i> Configuración
+                        </a>
+                    </li>
+                    <li class="mt-5">
+                        <a href="#" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-            <div id="res" class="seccion d-none">
-                <div class="card p-3">
-                    <h5>Reservas Recientes (Multicanal)</h5>
-                    <table class="table mt-3">
-                        <thead><tr><th>Huésped</th><th>Canal</th><th>Check-in</th></tr></thead>
-                        <tbody>
-                            <tr><td>Juan Pérez</td><td><span class="badge bg-primary">Booking</span></td><td>05/02/26</td></tr>
-                            <tr><td>Maria García</td><td><span class="badge bg-info">Web</span></td><td>06/02/26</td></tr>
-                        </tbody>
-                    </table>
+            <!-- Contenido Principal -->
+            <div id="content" class="flex-grow-1">
+                <!-- Header -->
+                <div class="top-bar">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">Dashboard Operativo</h4>
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> <span id="currentTime"></span>
+                            </small>
+                        </div>
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="notifications">
+                                <i class="bi bi-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </div>
+                            <div class="sync-status">
+                                <i class="bi bi-arrow-repeat spinning"></i> Sincronizando...
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div id="house" class="seccion d-none">
-                <h5>Estado de Habitaciones</h5>
-                <div class="room-grid mt-3">
-                    <div class="room clean">101<br><small>Limpia</small></div>
-                    <div class="room dirty">102<br><small>Sucia</small></div>
-                    <div class="room clean">103<br><small>Limpia</small></div>
-                    <div class="room maint">104<br><small>Reparación</small></div>
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section active">
+                    <div class="container-fluid py-4">
+                        <!-- Métricas principales -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3">
+                                <div class="stat-card highlight animated">
+                                    <h5><i class="bi bi-building"></i> Ocupación</h5>
+                                    <h2 id="occupancyRate">85%</h2>
+                                    <div class="progress mt-2" style="height: 5px;">
+                                        <div class="progress-bar" role="progressbar" style="width: 85%"></div>
+                                    </div>
+                                    <small><i class="bi bi-arrow-up"></i> +5% vs ayer</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card animated" style="animation-delay: 0.1s;">
+                                    <h5><i class="bi bi-cash-stack"></i> ADR (Tarifa Promedio)</h5>
+                                    <h2 id="adrValue">$120</h2>
+                                    <small class="text-muted">Average Daily Rate</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card animated" style="animation-delay: 0.2s;">
+                                    <h5><i class="bi bi-graph-up"></i> RevPAR</h5>
+                                    <h2 id="revparValue">$102</h2>
+                                    <small class="text-muted">Revenue Per Available Room</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-card animated" style="animation-delay: 0.3s;">
+                                    <h5><i class="bi bi-star-fill text-warning"></i> Satisfacción</h5>
+                                    <h2 id="satisfactionRate">4.8</h2>
+                                    <div class="stars">
+                                        ⭐⭐⭐⭐⭐
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gráficos y Tablas -->
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <h5><i class="bi bi-bar-chart"></i> Ocupación Últimos 7 Días</h5>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="updateChart()">
+                                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="occupancyChart" class="chart-container">
+                                            <div class="chart-bars">
+                                                <div class="bar" style="--height: 70%; --day: 'Lun'"></div>
+                                                <div class="bar" style="--height: 65%; --day: 'Mar'"></div>
+                                                <div class="bar" style="--height: 80%; --day: 'Mié'"></div>
+                                                <div class="bar" style="--height: 75%; --day: 'Jue'"></div>
+                                                <div class="bar" style="--height: 90%; --day: 'Vie'"></div>
+                                                <div class="bar active" style="--height: 85%; --day: 'Sáb'"></div>
+                                                <div class="bar" style="--height: 60%; --day: 'Dom'"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-pie-chart"></i> Canales de Reserva</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="channel-chart">
+                                            <div class="channel-item">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span><i class="bi bi-globe text-primary"></i> Booking.com</span>
+                                                    <strong>45%</strong>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-primary" style="width: 45%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="channel-item">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span><i class="bi bi-airplane text-success"></i> Expedia</span>
+                                                    <strong>25%</strong>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-success" style="width: 25%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="channel-item">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span><i class="bi bi-browser-chrome text-info"></i> Web
+                                                        Directa</span>
+                                                    <strong>20%</strong>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-info" style="width: 20%"></div>
+                                                </div>
+                                            </div>
+                                            <div class="channel-item">
+                                                <div class="d-flex justify-content-between mb-2">
+                                                    <span><i class="bi bi-telephone text-warning"></i> Recepción</span>
+                                                    <strong>10%</strong>
+                                                </div>
+                                                <div class="progress" style="height: 8px;">
+                                                    <div class="progress-bar bg-warning" style="width: 10%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reservas Recientes -->
+                        <div class="row g-3 mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <h5><i class="bi bi-clock-history"></i> Reservas Recientes (Tiempo Real)</h5>
+                                        <div class="live-indicator">
+                                            <span class="pulse"></span> En vivo
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ID</th>
+                                                        <th>Huésped</th>
+                                                        <th>Canal</th>
+                                                        <th>Check-in</th>
+                                                        <th>Check-out</th>
+                                                        <th>Habitación</th>
+                                                        <th>Estado</th>
+                                                        <th>Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="reservationsTable">
+                                                    <tr class="new-entry">
+                                                        <td>#1234</td>
+                                                        <td><i class="bi bi-person-circle"></i> Juan Pérez</td>
+                                                        <td><span class="badge bg-primary">Booking</span></td>
+                                                        <td>05/02/26</td>
+                                                        <td>07/02/26</td>
+                                                        <td>101</td>
+                                                        <td><span class="badge bg-success">Confirmada</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary"
+                                                                onclick="openCheckIn()">
+                                                                <i class="bi bi-box-arrow-in-right"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>#1235</td>
+                                                        <td><i class="bi bi-person-circle"></i> Maria García</td>
+                                                        <td><span class="badge bg-info">Web</span></td>
+                                                        <td>06/02/26</td>
+                                                        <td>09/02/26</td>
+                                                        <td>205</td>
+                                                        <td><span class="badge bg-warning">Pendiente</span></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-box-arrow-in-right"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div id="rep" class="seccion d-none">
-                <div class="alert alert-dark">Generando reporte de Revenue Management para 2026...</div>
-                <div class="text-center p-5 bg-white rounded border">
-                    [ Aquí aparecerán los gráficos de barras y pasteles ]
+                <!-- Front Office Section -->
+                <div id="frontOffice" class="section">
+                    <div class="container-fluid py-4">
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="bi bi-door-open"></i> Check-In / Check-Out Digital</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-primary btn-lg w-100" onclick="openCheckIn()">
+                                                    <i class="bi bi-box-arrow-in-right"></i> Realizar Check-In
+                                                </button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button class="btn btn-danger btn-lg w-100" onclick="openCheckOut()">
+                                                    <i class="bi bi-box-arrow-right"></i> Realizar Check-Out
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-info mt-3">
+                                            <i class="bi bi-info-circle"></i>
+                                            <strong>Reducción de tiempo:</strong> De 8-12 minutos a 2-3 minutos con
+                                            check-in digital
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Housekeeping Section -->
+                <div id="housekeeping" class="section">
+                    <div class="container-fluid py-4">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between">
+                                        <h5><i class="bi bi-broom"></i> Gestión de Housekeeping</h5>
+                                        <button class="btn btn-sm btn-success" onclick="autoAssign()">
+                                            <i class="bi bi-magic"></i> Asignación Automática
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3" id="roomsGrid">
+                                            <!-- Habitaciones se generan dinámicamente -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reservations Section -->
+                <div id="reservations" class="section">
+                    <div class="container-fluid py-4">
+                        <iframe src="reservas.html" style="width: 100%; height: calc(100vh - 100px); border: none;">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between">
+                                    <h5><i class="bi bi-calendar-check"></i> Gestión de Reservas Multicanal</h5>
+                                    <button class="btn btn-primary" onclick="openNewReservation()">
+                                        <i class="bi bi-plus-circle"></i> Nueva Reserva
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" placeholder="Buscar huésped...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select">
+                                                <option>Todos los canales</option>
+                                                <option>Booking.com</option>
+                                                <option>Expedia</option>
+                                                <option>Web Directa</option>
+                                                <option>Recepción</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select">
+                                                <option>Todos los estados</option>
+                                                <option>Confirmada</option>
+                                                <option>Pendiente</option>
+                                                <option>Check-in</option>
+                                                <option>Check-out</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-check-circle"></i> Sistema sincronizado con OTAs. No hay
+                                        conflictos de doble reserva.
+                                    </div>
+                                </div>
+                            </div>
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reports" class="section">
+                    <div class="container-fluid py-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-graph-up-arrow"></i> Reportes y Analítica en Tiempo Real</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-primary w-100"
+                                            onclick="generateReport('revenue')">
+                                            <i class="bi bi-currency-dollar"></i> Revenue Management
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-primary w-100"
+                                            onclick="generateReport('occupancy')">
+                                            <i class="bi bi-building"></i> Ocupación
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-primary w-100"
+                                            onclick="generateReport('satisfaction')">
+                                            <i class="bi bi-star"></i> Satisfacción
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="reportOutput" class="report-output">
+                                    <p class="text-center text-muted">Selecciona un tipo de reporte para generar</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CRM Section -->
+                <div id="crm" class="section">
+                    <div class="container-fluid p-0" style="height: calc(100vh - 100px);">
+                        <iframe src="crm.html" 
+                                id="crmIframe"
+                                style="width: 100%; 
+                                       height: 100%; 
+                                       border: none; 
+                                       border-radius: 12px;
+                                       box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settings" class="section">
+                    <div class="container-fluid py-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="bi bi-gear"></i> Configuración del Sistema</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Configuración de integraciones, usuarios y parámetros</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Función para el Login
-    function acceder() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if(u === 'admin' && p === '1234') {
-            document.getElementById('login-screen').classList.add('d-none');
-            document.getElementById('sistema').classList.remove('d-none');
-        } else {
-            document.getElementById('error').classList.remove('d-none');
-        }
-    }
+    <!-- Modal Check-In -->
+    <div class="modal fade" id="checkInModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-box-arrow-in-right"></i> Check-In Digital</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkInForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control" value="Juan Pérez">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Documento</label>
+                                <input type="text" class="form-control" value="1234567890">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" value="juan@email.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Teléfono</label>
+                                <input type="tel" class="form-control" value="+593 999 999 999">
+                            </div>
+                            <div class="col-md-12">
+                                <div class="alert alert-success">
+                                    <i class="bi bi-qr-code"></i> Código de acceso móvil: <strong>AB-1234</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="completeCheckIn()">
+                        <i class="bi bi-check-circle"></i> Completar Check-In
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    // Función para navegar
-    function ver(id) {
-        // Escondemos todas las secciones
-        document.querySelectorAll('.seccion').forEach(s => s.classList.add('d-none'));
-        // Mostramos la que queremos
-        document.getElementById(id).classList.remove('d-none');
-        
-        // Cambiar título arriba
-        const nombres = {dash:'Dashboard Operativo', res:'Front Office / Reservas', house:'Housekeeping', rep:'Reportes de Ventas'};
-        document.getElementById('titulo').innerText = nombres[id];
-    }
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
